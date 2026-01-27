@@ -1,0 +1,51 @@
+﻿@model List<Document>
+
+<h2>My documents</h2>
+
+<a asp-controller="Document" asp-action="Upload" class="btn btn-primary">Upload new document</a>
+
+@if (!Model.Any())
+{
+    <p>No documents yet! Please, upload new Docs.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Create date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var doc in Model)
+            {
+                <tr>
+                    <td>@doc.Name</td>
+                    <td>@doc.Description</td>
+                    <td>@doc.CreatedAt.ToString("dd.MM.yyyy HH:mm")</td>
+                    <td>
+                        <a asp-controller="Document" asp-action="Details" asp-route-id="@doc.Id" class="btn btn-sm btn-info">Details</a>
+                        <form asp-controller="Document" asp-action="Delete" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@doc.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                        <form asp-controller="Document" asp-action="Share" method="post" class="d-inline">
+                            <input type="hidden" name="id" value="@doc.Id" />
+                            <button type="submit" class="btn btn-sm btn-secondary">Share</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (TempData["ShareLink"] != null)
+{
+    <div class="alert alert-info mt-3">
+        Share link: <a href="@TempData["ShareLink"]">@TempData["ShareLink"]</a>
+    </div>
+}
