@@ -1,3 +1,9 @@
+using DocumentHistoryTask.Data;
+using DocumentHistoryTask.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Конфигурация: сначала secrets, потом env
@@ -32,10 +38,19 @@ var goodConneсtString = connectionString
     .Replace("${DB_ADMIN_PASSWORD}", userpass);
 
 //<Блок с подключением и настройкой БД>
+builder.Services.AddDbContext<DocumentDbContext>(opt =>
+    opt.UseNpgsql(goodConneсtString));
 
 // Все сервисы
-
+// Identity
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(opt =>
+{
+    opt.User.RequireUniqueEmail = true;
+})
+    .AddEntityFrameworkStores<DocumentDbContext>()
+    .AddDefaultTokenProviders();
 builder.Services.AddAuthorization();
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
